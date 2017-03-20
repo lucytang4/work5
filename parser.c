@@ -88,7 +88,13 @@ void parse_file ( char * filename,
     double theta;
     char axis;
     
-    if ( strncmp(line, "line", strlen(line)) == 0 ) {
+    if (strncmp(line, "circle", strlen(line)) == 0){
+      fgets(line,sizeof(line),f);
+      //printf("CIRCLE\t%s", line);
+      
+    }
+
+    else if ( strncmp(line, "line", strlen(line)) == 0 ) {
       fgets(line, sizeof(line), f);
       //printf("LINE\t%s", line);
 
