@@ -1,5 +1,6 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <math.h>
 
 #include "ml6.h"
 #include "display.h"
@@ -19,12 +20,16 @@
 void add_circle( struct matrix * points, 
 		 double cx, double cy, double cz,
 		 double r, double step ) {
-  double x,y;
-  int ctr =  0;
+  double x1,y1,x2,y2;
+  x1 = r*cos(0)+ cx;
+  y1 = r*sin(0) + cy;
+  double ctr =  step;
   for (; ctr < 1; ctr+=step){
-    x = r*cos(ctr) + cx;
-    y = r*sin(ctr) + cy;
-    add_point(points,x,y,cz);
+    x2 = r*cos(ctr*2*M_PI) + cx;
+    y2 = r*sin(ctr*2*M_PI) + cy;
+    add_edge(points,x1,y1,cz,x2,y2,cz);
+    x1 = x2;
+    y1 = y2;
   }
 }
 
@@ -52,8 +57,19 @@ void add_curve( struct matrix *points,
 		double x2, double y2, 
 		double x3, double y3, 
 		double step, int type ) {
-
-  //add_point(points,
+  struct matrix *cx = generate_curve_coefs(x0,x1,x2,x3,type);
+  struct matrix *cy = generate_curve_coefs(y0,y1,y2,y3,type);
+  double px1,py1,px2,py2;
+  px1 = cx->m[3][0];
+  py1 = cy->m[3][0];
+  double ctr = step;
+  for (; ctr < 1; ctr+=step){
+    px2 = (cx->m[0][0])*ctr*ctr*ctr + (cx->m[1][0])*ctr*ctr + (cx->m[2][0])*ctr + cx->m[3][0];
+    py2 = (cy->m[0][0])*ctr*ctr*ctr + (cy->m[1][0])*ctr*ctr + (cy->m[2][0])*ctr + cy->m[3][0];
+    add_edge(points,px1,py1,0,px2,py2,0);
+    px1 = px2;
+    py1 = py2;
+  }
 }
 
 

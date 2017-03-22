@@ -3,6 +3,7 @@
 #include <math.h>
 
 #include "matrix.h"
+#include "draw.h"
 
 /*======== struct matrix * make_bezier() ==========
   Inputs:   
@@ -32,23 +33,22 @@ struct matrix * make_bezier() {
 /*======== struct matrix * make_hermite() ==========
   Inputs:   
   Returns: 
-
   The correct 4x4 matrix that can be used to generate
   the coefiecients for a hermite curve
   ====================*/
 struct matrix * make_hermite() {
   struct matrix *h = new_matrix(4,4);
   ident(h);
-  h[0][0] = 2;
-  h[0][1] = -2;
-  h[0][2] = 1;
-  h[0][3] = 1;
-  h[1][0] = -3; 
-  h[1][1] = 3;
-  h[1][2] = -2;
-  h[1][3] = 1;
-  h[3][0] = 1;
-  h[3][3] = 0;
+  h->m[0][0] = 2;
+  h->m[0][1] = -2;
+  h->m[0][2] = 1;
+  h->m[0][3] = 1;
+  h->m[1][0] = -3; 
+  h->m[1][1] = 3;
+  h->m[1][2] = -2;
+  h->m[1][3] = -1;
+  h->m[3][0] = 1;
+  h->m[3][3] = 0;
   //printf("hermite matrix:\n");
   //print_matrix(h);
   return h;
@@ -70,23 +70,23 @@ struct matrix * make_hermite() {
   ====================*/
 struct matrix * generate_curve_coefs( double p1, double p2, 
 				      double p3, double p4, int type) {
-  struct matrix *c = new_matrix(4,1);
   struct matrix *tmp = new_matrix(4,4);
   struct matrix *g = new_matrix(4,1);
   if (type == 0)
     tmp = make_hermite();
   else if (type == 1)
-    tmp= make_bezier();
-  g->m[0][0] = p1;
-  g->m[1][0] = p2;
-  g->m[2][0] = p3;
+    tmp = make_bezier();
+  //g->m[0][0] = p1;
+  //g->m[1][0] = p2;
+  //g->m[2][0] = p3;
+  add_point(g,p1,p2,p3);
   g->m[3][0] = p4;
   //printf("givens matrix:\n");
   //print_matrix(g);
-  c= matrix_mult(c,g);
+  matrix_mult(tmp,g);
   //printf("coefficients matrix:\n");
   //print_matrix(c);
-  return c;
+  return g;
 }
 
 
